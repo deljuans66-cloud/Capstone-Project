@@ -1,5 +1,5 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function Header() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -7,19 +7,22 @@ function Header() {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate("/");
   };
 
   return (
     <header className="header">
       <Link to="/" className="header-logo">
-        Gaming Hub
+        Universal Gaming Hub
       </Link>
       <nav className="header-nav">
         {isAuthenticated ? (
           <>
             <Link to="/profile">Hi, {user?.username}</Link>
-            <button className="btn btn-secondary btn-small" onClick={handleLogout}>
+            <button
+              className="btn btn-secondary btn-small"
+              onClick={handleLogout}
+            >
               Logout
             </button>
           </>

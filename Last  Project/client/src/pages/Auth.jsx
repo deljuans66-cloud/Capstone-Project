@@ -1,18 +1,18 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { authApi, platformApi } from '../services/api';
-import { useAuth } from '../context/AuthContext';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { authApi, platformApi } from "../services/api";
+import { useAuth } from "../context/AuthContext";
 
 function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const [platforms, setPlatforms] = useState([]);
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    platform_id: ''
+    username: "",
+    email: "",
+    password: "",
+    platform_id: "",
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -20,12 +20,12 @@ function Auth() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      const selectedPlatform = localStorage.getItem('selectedPlatform');
+      const selectedPlatform = localStorage.getItem("selectedPlatform");
       if (selectedPlatform) {
-        localStorage.removeItem('selectedPlatform');
+        localStorage.removeItem("selectedPlatform");
         navigate(`/platform/${selectedPlatform}`);
       } else {
-        navigate('/');
+        navigate("/");
       }
     }
   }, [isAuthenticated, navigate]);
@@ -38,29 +38,32 @@ function Auth() {
     try {
       const response = await platformApi.getAll();
       setPlatforms(response.data);
-      // Set default platform from localStorage or first platform
-      const selectedPlatform = localStorage.getItem('selectedPlatform');
+
+      const selectedPlatform = localStorage.getItem("selectedPlatform");
       if (selectedPlatform) {
-        setFormData(prev => ({ ...prev, platform_id: selectedPlatform }));
+        setFormData((prev) => ({ ...prev, platform_id: selectedPlatform }));
       } else if (response.data.length > 0) {
-        setFormData(prev => ({ ...prev, platform_id: response.data[0].id.toString() }));
+        setFormData((prev) => ({
+          ...prev,
+          platform_id: response.data[0].id.toString(),
+        }));
       }
     } catch (err) {
-      console.error('Error fetching platforms:', err);
+      console.error("Error fetching platforms:", err);
     }
   };
 
   const handleChange = (e) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     }));
-    setError('');
+    setError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
     try {
@@ -68,28 +71,28 @@ function Auth() {
       if (isLogin) {
         response = await authApi.login({
           email: formData.email,
-          password: formData.password
+          password: formData.password,
         });
       } else {
         response = await authApi.register({
           username: formData.username,
           email: formData.email,
           password: formData.password,
-          platform_id: parseInt(formData.platform_id)
+          platform_id: parseInt(formData.platform_id),
         });
       }
 
       login(response.data.user, response.data.token);
 
-      const selectedPlatform = localStorage.getItem('selectedPlatform');
+      const selectedPlatform = localStorage.getItem("selectedPlatform");
       if (selectedPlatform) {
-        localStorage.removeItem('selectedPlatform');
+        localStorage.removeItem("selectedPlatform");
         navigate(`/platform/${selectedPlatform}`);
       } else {
         navigate(`/platform/${response.data.user.platform_id}`);
       }
     } catch (err) {
-      setError(err.response?.data?.error || 'An error occurred');
+      setError(err.response?.data?.error || "An error occurred");
     } finally {
       setLoading(false);
     }
@@ -97,17 +100,17 @@ function Auth() {
 
   return (
     <div className="auth-container">
-      <h2>{isLogin ? 'Login' : 'Register'}</h2>
+      <h2>{isLogin ? "Login" : "Register"}</h2>
 
       <div className="auth-toggle">
         <button
-          className={isLogin ? 'active' : ''}
+          className={isLogin ? "active" : ""}
           onClick={() => setIsLogin(true)}
         >
           Login
         </button>
         <button
-          className={!isLogin ? 'active' : ''}
+          className={!isLogin ? "active" : ""}
           onClick={() => setIsLogin(false)}
         >
           Register
@@ -176,8 +179,13 @@ function Auth() {
           </div>
         )}
 
-        <button type="submit" className="btn btn-primary" style={{ width: '100%' }} disabled={loading}>
-          {loading ? 'Please wait...' : (isLogin ? 'Login' : 'Register')}
+        <button
+          type="submit"
+          className="btn btn-primary"
+          style={{ width: "100%" }}
+          disabled={loading}
+        >
+          {loading ? "Please wait..." : isLogin ? "Login" : "Register"}
         </button>
       </form>
     </div>
